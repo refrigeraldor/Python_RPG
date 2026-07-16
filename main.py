@@ -15,7 +15,7 @@ player_hp = 100
 player_max_hp = 100
 exp_to_lvl_up = 2
 
-items = ["potion", "potion", "super potion"]
+items = ["potion", "potion", "super potion", "super potion"]
 
 y_index = 0
 
