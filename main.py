@@ -55,6 +55,102 @@ def battleIntro():
     clear_screen()
     battle()
 
+def save():
+    global player_x 
+    global player_y
+    global player_attack
+    global player_defense
+    global player_speed
+    global player_level
+    global player_exp
+    global player_hp
+    global player_max_hp
+    global exp_to_lvl_up
+    global items
+
+    # save the player's stats to a file
+    clear_screen()
+    print("Do you want to import an existing save file or create a new one?")
+    print("""
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          Import (i) | Create new (c) | Exit (b)
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          """)
+    choice = input()
+
+    # check the player's choice and either import or create a new save file
+    if choice == "c":
+        with open("save.txt", "w") as savefile:
+            #player_x|player_y|player_attack|player_defense|player_speed|player_level|player_exp|player_hp|player_max_hp|exp_to_lvl_up|items
+            savefile.write(f"{player_x}|{player_y}|{player_attack}|{player_defense}|{player_speed}|{player_level}|{player_exp}|{player_hp}|{player_max_hp}|{exp_to_lvl_up}|{items}")
+            print("Copy the following code and save it somewhere safe. \nYou can use it to import your save file later. \n(Type 'b' to exit)")
+            print(f"{player_x}|{player_y}|{player_attack}|{player_defense}|{player_speed}|{player_level}|{player_exp}|{player_hp}|{player_max_hp}|{exp_to_lvl_up}|{items}")
+            choice = input()
+
+    if choice == "i":
+        clear_screen()
+        print("Paste your save code here. (Type 'b' to exit)")
+        choice = input()
+        if choice == "b":
+            return
+        else:
+            # read the player's stats from the save code and update the variables
+            save_data = choice.split("|")
+            player_x = int(save_data[0])
+            player_y = int(save_data[1])
+            player_attack = int(save_data[2])
+            player_defense = int(save_data[3])
+            player_speed = int(save_data[4])
+            player_level = int(save_data[5])
+            player_exp = int(save_data[6])
+            player_hp = int(save_data[7])
+            player_max_hp = int(save_data[8])
+            exp_to_lvl_up = int(save_data[9])
+            
+            # convert the string representation of the items list back into a list
+            items_str = save_data[10].strip("[]").replace("'", "")
+            # split the string into individual items and remove any whitespace
+            items_list = [item.strip() for item in items_str.split(",") if item.strip()]
+            items.clear()
+            items.extend(items_list)
+
+def showItems():
+    global player_hp
+    global player_max_hp
+
+    # display the player's items and prompt them to choose one to use
+    clear_screen()
+    print('Type in an item number to use one. \nType "b" to go back.')
+    print("======================")
+    print(f"Your HP: {player_hp}/{player_max_hp}")
+    print(f"Your Level: {player_level}")
+    print("======================")
+    for index, item in enumerate(items):
+        print(f"{item} | no.{index}")
+    print("======================")
+    choice = input()
+    
+    # check which item the player chose and apply its effect
+    if choice == "b":
+        return
+
+    elif items[int(choice)] == "potion":
+        items.pop(int(choice))
+        print("You used a potion. It healed 20 HP.")
+        player_hp += 20
+        if player_hp > player_max_hp:
+            player_hp = player_max_hp
+            
+    elif items[int(choice)] == "super potion":
+        items.pop(int(choice))
+        print("You used a super potion. It healed 50 HP.")
+        player_hp += 50
+        if player_hp > player_max_hp:
+            player_hp = player_max_hp
+    
+    else:
+        return
+
 # level up the player and update their stats
 def levelUp():
     global player_attack
@@ -344,17 +440,33 @@ def userInput():
         else:
             player_x -= 1
     
-    # chance of a wild encounter
-    wildChance = random.randint(1, 5)
-    if wildChance == 5:
-        battleIntro()
+    elif move == "i":
+        showItems()
+
+    elif move == "c":
+        save()
+        
+    # chance of a wild encounter if player moved
+    if move == "w" or move == "a" or move == "s" or move == "d":
+        wildChance = random.randint(1, 5)
+        if wildChance == 5:
+            battleIntro()
 
 # start game
 clear_screen()
 createMap()
-
+print("""
+        ==========================================
+        WASD: move | "i": items | "c": save/import
+        ==========================================
+    """)
 # main game loop
 while game:
     clear_screen()
     createMap()
+    print("""
+            ==========================================
+            WASD: move | "i": items | "c": save/import
+            ==========================================
+        """)
     userInput()
