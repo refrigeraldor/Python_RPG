@@ -287,6 +287,15 @@ def battle():
                 player_hp -= damageNum
                 print(f'It did {damageNum} damage!')
                 time.sleep(1)
+ 
+                # if player dies
+                if player_hp == 0 or player_hp < 0:
+                    player_hp = 0
+                    print("You were defeated!")
+                    time.sleep(1)
+                    print("Game Over!")
+                    time.sleep(1)
+                    exit()
 
             else:
                 # enemy attacks first (enemy is faster)
@@ -296,6 +305,15 @@ def battle():
                 player_hp -= damageNum
                 print(f'It did {damageNum} damage!')
                 time.sleep(1)
+
+                # if player dies
+                if player_hp == 0 or player_hp < 0:
+                    player_hp = 0
+                    print("You were defeated!")
+                    time.sleep(1)
+                    print("Game Over!")
+                    time.sleep(1)
+                    exit()
 
                 # player attacks second (player is slower)
                 if choice == "s":
